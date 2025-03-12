@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Ujian Dicoding</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_upcoming">upcoming</string>
+    <string name="title_finished">finished</string>
+    <string name="title_favorite">favorite</string>
+</resources>

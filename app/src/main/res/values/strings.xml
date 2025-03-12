@@ -5,4 +5,5 @@
     <string name="title_upcoming">upcoming</string>
     <string name="title_finished">finished</string>
     <string name="title_favorite">favorite</string>
+    <string name="title_setting">setting</string>
 </resources>

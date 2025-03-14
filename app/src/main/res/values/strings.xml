@@ -6,4 +6,5 @@
     <string name="title_finished">finished</string>
     <string name="title_favorite">favorite</string>
     <string name="title_setting">setting</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>

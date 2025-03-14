@@ -3,11 +3,17 @@ package com.example.ujiandicoding
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.ujiandicoding.databinding.ActivityMainBinding
+import com.example.ujiandicoding.ui.setting.SettingPreference
+import com.example.ujiandicoding.ui.setting.SettingViewModel
+import com.example.ujiandicoding.ui.setting.ViewModelFactory
+import com.example.ujiandicoding.ui.setting.dataStore
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.hide()
+
+        val viewModel = ViewModelProvider(this, ViewModelFactory(SettingPreference.getInstance(dataStore)))[SettingViewModel::class.java]
+
+        viewModel.getThemeSetting().observe(this){ isDarkModeActive ->
+            AppCompatDelegate.setDefaultNightMode(if (isDarkModeActive) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+        }
 
         val navView: BottomNavigationView = binding.navView
 

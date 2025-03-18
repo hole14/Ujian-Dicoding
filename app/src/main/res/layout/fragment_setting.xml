@@ -7,7 +7,7 @@
     tools:context=".ui.setting.SettingFragment"
     android:layout_margin="16dp"
     app:cardCornerRadius="12dp"
-    android:backgroundTint="#9CE2DC"
+    android:backgroundTint="#DCFDF8"
     tools:ignore="UseSwitchCompatOrMaterialXml">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,8 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:text="@string/title_setting"
-            android:textColor="?attr/colorOnSurface"
+            android:textColor="@color/black"
             android:textSize="50sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
@@ -35,6 +36,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="12dp"
             android:text="@string/dark_mode"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

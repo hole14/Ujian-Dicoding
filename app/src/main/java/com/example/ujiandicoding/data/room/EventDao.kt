@@ -19,7 +19,7 @@ interface EventDao {
     fun getAllEvent(): LiveData<List<EventEntity>>
 
     @Query("SELECT * FROM event WHERE name LIKE '%' || :query || '%'")
-    suspend fun getSearchEvent(query: String): List<EventEntity>
+    fun getSearchEvent(query: String): LiveData<List<EventEntity>>
 
     @Update
     suspend fun updateEvent(event: EventEntity)

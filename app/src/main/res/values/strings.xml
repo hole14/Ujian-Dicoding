@@ -7,4 +7,15 @@
     <string name="title_favorite">favorite</string>
     <string name="title_setting">setting</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="judul">Judul</string>
+    <string name="summary">Summary</string>
+    <string name="owner">Owner</string>
+    <string name="category">Kategori</string>
+    <string name="kota">Kota</string>
+    <string name="tanggal">Tanggal</string>
+    <string name="waktu">Waktu</string>
+    <string name="kouta">Kuota</string>
+    <string name="deskripsi">Deskripsi</string>
+    <string name="register">Register</string>
+    <string name="data_format">%s - %s</string>
 </resources>

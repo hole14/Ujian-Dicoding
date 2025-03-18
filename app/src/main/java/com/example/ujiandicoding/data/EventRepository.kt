@@ -19,7 +19,7 @@ class EventRepository private constructor(
     fun getUpcomingEvents(): LiveData<Result<List<EventEntity>>> = liveData(Dispatchers.IO) {
         emit(Result.Loading)
         try {
-            val respone = apiService.getUpcomingEvents(1)
+            val respone = apiService.getUpcomingEvents()
             val listEvent = respone.listEvents
             val eventList = listEvent?.map { event ->
                 val isFavorite = eventDao.isEventFavorited(event?.id!!)
@@ -54,7 +54,7 @@ class EventRepository private constructor(
     fun getFinishedEvents(): LiveData<Result<List<EventEntity>>> = liveData(Dispatchers.IO) {
         emit(Result.Loading)
         try {
-            val respone = apiService.getFinishedEvents(0)
+            val respone = apiService.getFinishedEvents()
             val listEvent = respone.listEvents
             val eventList = listEvent?.map { event ->
                 val isFavorite = eventDao.isEventFavorited(event?.id!!)

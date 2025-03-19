@@ -34,7 +34,7 @@ class DetailActivity : AppCompatActivity() {
         binding.tvJudul.text = event?.name
         binding.tvKategori.text = event?.category
         binding.tvTanggal.text = "📆 ${event?.beginTime?.let { formatDate(it) }} - ${event?.endTime?.let { formatDate(it) }}"
-        binding.tvWaktu.text = "⏱ ${event?.beginTime?.let { formatTime(it) }} - ${event?.endTime?.let { formatTime(it) }}"
+        binding.tvWaktu.text = "⏰ ${event?.beginTime?.let { formatTime(it) }} - ${event?.endTime?.let { formatTime(it) }}"
         binding.tvDeskripsi.text = HtmlCompat.fromHtml(event?.description!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
         Glide.with(this)
             .load(event.mediaCover)

@@ -18,4 +18,5 @@
     <string name="deskripsi">Deskripsi</string>
     <string name="register">Register</string>
     <string name="data_format">%s - %s</string>
+    <string name="search_hint">Search event</string>
 </resources>

@@ -33,4 +33,7 @@ interface EventDao {
     @Query("SELECT EXISTS(SELECT 1 FROM event WHERE id = :id AND isFavorite = 1)")
     fun isEventFavorited(id: Int): Boolean
 
+//    @Query("UPDATE event SET isFavorite = :isFavorite WHERE id = :eventId")
+//    suspend fun updateEventFavorite(eventId: Int, isFavorite: Boolean)
+
 }

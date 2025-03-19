@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.example.ujiandicoding.data.entity.EventEntity
+import com.example.ujiandicoding.data.respone.ListEventsItem
 import com.example.ujiandicoding.data.retrofit.ApiService
 import com.example.ujiandicoding.data.room.EventDao
 import kotlinx.coroutines.Dispatchers
@@ -85,6 +86,20 @@ class EventRepository private constructor(
         val localData: LiveData<Result<List<EventEntity>>> = eventDao.getAllEvent().map { Result.Success(it) }
         emitSource(localData)
     }
+    suspend fun searchEvents(query: String): List<EventEntity>{
+        return eventDao.getSearchEvent(query)
+    }
+    fun getFavoriteEvents(): LiveData<List<EventEntity>> {
+        return eventDao.getEventFavorites()
+    }
+    suspend fun setFavoriteEvent(event: EventEntity, favoriteState: Boolean) {
+        event.isFavorite = favoriteState
+        eventDao.updateEvent(event)
+    }
+//    suspend fun updateEventFavorite(eventId: Int, isFavorite: Boolean) {
+//        eventDao.updateEventFavorite(eventId, isFavorite)
+//    }
+
     companion object {
         @Volatile
         private var instance: EventRepository? = null

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class UpcomingAdapter: ListAdapter<EventEntity, UpcomingAdapter.ViewHolder>(DIFF_CALLBACK) {
-    class ViewHolder(private val binding: ItemUpcomingBinding): RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(val binding: ItemUpcomingBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(event: EventEntity) {
             binding.tvJudul.text = event.name

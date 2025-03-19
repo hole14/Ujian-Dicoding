@@ -15,11 +15,11 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: List<EventEntity>)
 
+    @Query("SELECT * FROM event WHERE name LIKE '%' || :query || '%'")
+    suspend fun getSearchEvent(query: String): List<EventEntity>
+
     @Query("SELECT * FROM event")
     fun getAllEvent(): LiveData<List<EventEntity>>
-
-    @Query("SELECT * FROM event WHERE name LIKE '%' || :query || '%'")
-    fun getSearchEvent(query: String): LiveData<List<EventEntity>>
 
     @Update
     suspend fun updateEvent(event: EventEntity)

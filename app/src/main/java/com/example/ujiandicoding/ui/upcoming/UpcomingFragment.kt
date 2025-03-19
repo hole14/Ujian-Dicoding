@@ -16,11 +16,13 @@ import com.example.ujiandicoding.data.Result
 import com.example.ujiandicoding.data.retrofit.ApiConfig
 import com.example.ujiandicoding.data.room.EventDatabase
 import com.example.ujiandicoding.databinding.FragmentUpcomingBinding
+import com.example.ujiandicoding.ui.favorite.FavoriteViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class UpcomingFragment : Fragment() {
     private lateinit var binding: FragmentUpcomingBinding
+    private lateinit var favoriteViewModel: FavoriteViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,10 +35,11 @@ class UpcomingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val factory = EventViewModelFactory.getInstance(requireActivity())
-        val viewModel:EventViewModel by viewModels {
-            factory
-        }
+        val viewModel:EventViewModel by viewModels { factory }
+        favoriteViewModel = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
+
         val adapter = UpcomingAdapter()
+
         binding.rvUpcoming.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUpcoming.adapter = adapter
 

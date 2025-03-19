@@ -17,7 +17,7 @@ import com.example.ujiandicoding.ui.detail.DetailActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class UpcomingAdapter: ListAdapter<EventEntity, UpcomingAdapter.ViewHolder>(DIFF_CALLBACK) {
+class UpcomingAdapter(private val onFavoriteClick: (EventEntity) -> Unit): ListAdapter<EventEntity, UpcomingAdapter.ViewHolder>(DIFF_CALLBACK) {
     class ViewHolder(val binding: ItemUpcomingBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(event: EventEntity) {
@@ -51,6 +51,15 @@ class UpcomingAdapter: ListAdapter<EventEntity, UpcomingAdapter.ViewHolder>(DIFF
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = getItem(position)
         holder.bind(event)
+        val ivFavorite = holder.binding.ivFavorite
+        if (event.isFavorite) {
+            ivFavorite.setImageDrawable(ContextCompat.getDrawable(ivFavorite.context, R.drawable.ic_love_change))
+        } else {
+            ivFavorite.setImageDrawable(ContextCompat.getDrawable(ivFavorite.context, R.drawable.ic_love))
+        }
+        ivFavorite.setOnClickListener {
+            onFavoriteClick(event)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

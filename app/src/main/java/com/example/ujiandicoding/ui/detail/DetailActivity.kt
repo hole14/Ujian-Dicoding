@@ -5,10 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.ujiandicoding.EventViewModel
 import com.example.ujiandicoding.R
 import com.example.ujiandicoding.data.entity.EventEntity
 import com.example.ujiandicoding.databinding.ActivityDetailBinding
@@ -20,6 +22,9 @@ class DetailActivity : AppCompatActivity() {
         const val EXTRA_EVENT = "extra_event"
     }
     private lateinit var binding: ActivityDetailBinding
+    private val viewModel: EventViewModel by viewModels ()
+    private var event: EventEntity? = null
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +34,7 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        val event = intent.getParcelableExtra<EventEntity>(EXTRA_EVENT)
+        event = intent.getParcelableExtra(EXTRA_EVENT)
 
         binding.tvJudul.text = event?.name
         binding.tvKategori.text = event?.category
@@ -37,19 +42,31 @@ class DetailActivity : AppCompatActivity() {
         binding.tvWaktu.text = "⏰ ${event?.beginTime?.let { formatTime(it) }} - ${event?.endTime?.let { formatTime(it) }}"
         binding.tvDeskripsi.text = HtmlCompat.fromHtml(event?.description!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
         Glide.with(this)
-            .load(event.mediaCover)
+            .load(event?.mediaCover)
             .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))
             .into(binding.ivFoto)
-        binding.tvKota.text = "📍 ${event.cityName}"
-        binding.tvQuota.text = "👥 ${event.registrants}/${event.quota}"
-        binding.tvSummary.text = event.summary
-        binding.tvOwner.text = "By: ${event.ownerName}"
+        binding.tvKota.text = "📍 ${event?.cityName}"
+        binding.tvQuota.text = "👥 ${event?.registrants}/${event?.quota}"
+        binding.tvSummary.text = event?.summary
+        binding.tvOwner.text = "By: ${event?.ownerName}"
         binding.btnRegister.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.link))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event?.link))
             startActivity(intent)
         }
+//        binding.fabAdd.setOnClickListener {
+//            event?.let {
+//                val favorite = !it.isFavorite
+//                it.isFavorite = favorite
+//                viewModel.updateEventFavorite(it.id, favorite)
+//                updateFavoriteButton(favorite)
+//            }
+//        }
 
     }
+//    private fun updateFavoriteButton(isFavorite: Boolean) {
+//        val icon = if (isFavorite) R.drawable.ic_love else R.drawable.ic_love_change
+//        binding.fabAdd.setImageResource(icon)
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {

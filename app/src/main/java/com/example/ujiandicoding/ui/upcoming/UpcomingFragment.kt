@@ -7,22 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ujiandicoding.EventViewModel
 import com.example.ujiandicoding.EventViewModelFactory
-import com.example.ujiandicoding.data.EventRepository
 import com.example.ujiandicoding.data.Result
-import com.example.ujiandicoding.data.retrofit.ApiConfig
-import com.example.ujiandicoding.data.room.EventDatabase
 import com.example.ujiandicoding.databinding.FragmentUpcomingBinding
-import com.example.ujiandicoding.ui.favorite.FavoriteViewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class UpcomingFragment : Fragment() {
     private lateinit var binding: FragmentUpcomingBinding
-    private lateinit var favoriteViewModel: FavoriteViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,12 +28,18 @@ class UpcomingFragment : Fragment() {
 
         val factory = EventViewModelFactory.getInstance(requireActivity())
         val viewModel:EventViewModel by viewModels { factory }
-        favoriteViewModel = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
 
-        val adapter = UpcomingAdapter()
+        val adapter = UpcomingAdapter {event ->
+            if (event.isFavorite) {
+                viewModel.deleteFavoriteEvent(event)
+            } else {
+                viewModel.saveFavoriteEvent(event)
+            }
+        }
 
         binding.rvUpcoming.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUpcoming.adapter = adapter
+        adapter.submitList(emptyList())
 
         viewModel.getUpcomingEvents().observe(viewLifecycleOwner){result ->
             when (result){

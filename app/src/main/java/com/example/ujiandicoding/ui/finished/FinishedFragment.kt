@@ -6,16 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ujiandicoding.EventViewModel
 import com.example.ujiandicoding.EventViewModelFactory
 import com.example.ujiandicoding.R
 import com.example.ujiandicoding.data.Result
+import com.example.ujiandicoding.data.entity.EventEntity
+import com.example.ujiandicoding.data.respone.ListEventsItem
 import com.example.ujiandicoding.databinding.FragmentFinishedBinding
 
 class FinishedFragment : Fragment() {
     private lateinit var binding: FragmentFinishedBinding
+    private var search = listOf<ListEventsItem>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,9 +36,15 @@ class FinishedFragment : Fragment() {
             factory
         }
 
-        val adapter = FinishedAdapter()
+        val adapter = FinishedAdapter { event ->
+            if (event.isFavorite) {
+                viewModel.deleteFavoriteEvent(event)
+            } else {
+                viewModel.saveFavoriteEvent(event)
+            }
+        }
         binding.rvFinished.layoutManager = LinearLayoutManager(requireContext())
-
+        binding.rvFinished.adapter = adapter
 
         viewModel.getFinishedEvents().observe(viewLifecycleOwner) { result ->
             when (result) {
@@ -47,7 +57,21 @@ class FinishedFragment : Fragment() {
                 }
             }
         }
-        binding.rvFinished.adapter = adapter
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
 
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    viewModel.searchEvents(newText)
+                }
+                return true
+            }
+
+        })
+        viewModel.query.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
     }
 }

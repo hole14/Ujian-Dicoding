@@ -19,4 +19,5 @@
     <string name="register">Register</string>
     <string name="data_format">%s - %s</string>
     <string name="search_hint">Search event</string>
+    <string name="daily_reminder">Daily Reminder</string>
 </resources>

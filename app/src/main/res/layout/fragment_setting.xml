@@ -34,7 +34,6 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="70dp"
             android:layout_marginEnd="12dp"
-            android:layout_marginBottom="12dp"
             android:text="@string/dark_mode"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -42,6 +41,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
             tools:ignore="MissingConstraints" />
+
+        <Switch
+            android:id="@+id/switch_daily"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/daily_reminder"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_theme" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

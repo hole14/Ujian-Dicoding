@@ -1,20 +1,21 @@
 package com.example.ujiandicoding.ui.setting
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import com.example.ujiandicoding.R
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.Worker
 import com.example.ujiandicoding.databinding.FragmentSettingBinding
+import java.util.concurrent.TimeUnit
 
 class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingBinding
-    private val viewModel: SettingViewModel by viewModels(){
+    private val viewModel: SettingViewModel by viewModels{
         ViewModelFactory(SettingPreference.getInstance(requireContext().dataStore))
     }
     override fun onCreateView(
@@ -36,6 +37,27 @@ class SettingFragment : Fragment() {
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveThemeSetting(isChecked)
         }
+
+        viewModel.getReminderSetting().observe(viewLifecycleOwner){ isReminderActive ->
+            binding.switchDaily.isChecked = isReminderActive
+        }
+        binding.switchDaily.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.saveReminderSetting(isChecked)
+            if (isChecked) {
+                dailyReminder()
+            } else {
+                WorkManager.getInstance(requireContext()).cancelUniqueWork("DailyReminder")
+            }
+        }
+    }
+
+    private fun dailyReminder(){
+        val worker = PeriodicWorkRequestBuilder<Worker>(1, TimeUnit.DAYS)
+            .setInitialDelay(10, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork("DailyReminder",
+            ExistingPeriodicWorkPolicy.UPDATE, worker)
     }
 
 }

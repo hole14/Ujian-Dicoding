@@ -14,4 +14,7 @@ interface ApiService {
     @GET("events")
     suspend fun getSearchEvents(@Query("active") active: Int = -1, @Query("q") q: String): EventsResponse
 
+    @GET("events?active=-1&limit=1")
+    suspend fun getLatestEvent(): EventsResponse
+
 }

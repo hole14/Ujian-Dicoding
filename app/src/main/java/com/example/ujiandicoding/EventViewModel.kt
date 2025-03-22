@@ -9,6 +9,7 @@ import com.example.ujiandicoding.data.EventRepository
 import com.example.ujiandicoding.data.entity.EventEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EventViewModel(private val eventRepository: EventRepository) : ViewModel() {
     fun getUpcomingEvents() = eventRepository.getUpcomingEvents()
@@ -23,22 +24,4 @@ class EventViewModel(private val eventRepository: EventRepository) : ViewModel()
             _query.postValue(result)
         }
     }
-
-    fun getFavoriteEvents() = eventRepository.getFavoriteEvents()
-
-    fun saveFavoriteEvent(event: EventEntity) {
-        viewModelScope.launch {
-            eventRepository.setFavoriteEvent(event, true)
-        }
-    }
-    fun deleteFavoriteEvent(event: EventEntity) {
-        viewModelScope.launch {
-            eventRepository.setFavoriteEvent(event, false)
-        }
-    }
-//    fun updateEventFavorite(eventId: Int, isFavorite: Boolean) {
-//        viewModelScope.launch {
-//            eventRepository.updateEventFavorite(eventId, isFavorite)
-//        }
-//    }
 }

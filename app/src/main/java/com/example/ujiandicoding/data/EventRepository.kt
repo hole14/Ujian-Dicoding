@@ -2,16 +2,12 @@ package com.example.ujiandicoding.data
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.example.ujiandicoding.data.entity.EventEntity
-import com.example.ujiandicoding.data.respone.ListEventsItem
 import com.example.ujiandicoding.data.retrofit.ApiService
 import com.example.ujiandicoding.data.room.EventDao
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class EventRepository private constructor(
     private val eventDao: EventDao,
@@ -20,12 +16,11 @@ class EventRepository private constructor(
     fun getUpcomingEvents(): LiveData<Result<List<EventEntity>>> = liveData(Dispatchers.IO) {
         emit(Result.Loading)
         try {
-            val respone = apiService.getUpcomingEvents()
+            val respone = apiService.getUpcomingEvents(1)
             val listEvent = respone.listEvents
             val eventList = listEvent?.map { event ->
-                val isFavorite = eventDao.isEventFavorited(event?.id!!)
                 EventEntity(
-                    event.id,
+                    event?.id!!,
                     event.name!!,
                     event.summary!!,
                     event.ownerName!!,
@@ -39,28 +34,26 @@ class EventRepository private constructor(
                     event.category!!,
                     event.quota!!,
                     event.registrants!!,
-                    isFavorite
+                    false,
+                    1
                 )
             }
-            eventDao.deleteAll()
             eventList?.let { eventDao.insertEvent(it) }
         } catch (e: Exception) {
             Log.d("EventRepository", "getUpcomingEvents: ${e.message.toString()} ")
             emit(Result.Error(e.message.toString()))
         }
-        val localData: LiveData<Result<List<EventEntity>>> = eventDao.getAllEvent().map { Result.Success(it) }
+        val localData: LiveData<Result<List<EventEntity>>> = eventDao.getUpcomingEvents().map { Result.Success(it) }
         emitSource(localData)
-
     }
     fun getFinishedEvents(): LiveData<Result<List<EventEntity>>> = liveData(Dispatchers.IO) {
         emit(Result.Loading)
         try {
-            val respone = apiService.getFinishedEvents()
+            val respone = apiService.getFinishedEvents(0)
             val listEvent = respone.listEvents
             val eventList = listEvent?.map { event ->
-                val isFavorite = eventDao.isEventFavorited(event?.id!!)
                 EventEntity(
-                    event.id,
+                    event?.id!!,
                     event.name!!,
                     event.summary!!,
                     event.ownerName!!,
@@ -74,31 +67,28 @@ class EventRepository private constructor(
                     event.category!!,
                     event.quota!!,
                     event.registrants!!,
-                    isFavorite
+                    false,
+                    0
                 )
             }
-            eventDao.deleteAll()
             eventList?.let { eventDao.insertEvent(it) }
+
         } catch (e: Exception) {
             Log.d("EventRepository", "getFinishedEvents: ${e.message.toString()} ")
             emit(Result.Error(e.message.toString()))
         }
-        val localData: LiveData<Result<List<EventEntity>>> = eventDao.getAllEvent().map { Result.Success(it) }
+        val localData: LiveData<Result<List<EventEntity>>> = eventDao.getFinishedEvents().map { Result.Success(it) }
         emitSource(localData)
     }
     suspend fun searchEvents(query: String): List<EventEntity>{
         return eventDao.getSearchEvent(query)
     }
-    fun getFavoriteEvents(): LiveData<List<EventEntity>> {
-        return eventDao.getEventFavorites()
+
+    fun getFavoriteEvents(): LiveData<List<EventEntity>> = eventDao.getFavoriteEvents()
+
+    suspend fun toggleFavorite(event: EventEntity) {
+        eventDao.updateFavoriteStatus(event.id, !event.isFavorite)
     }
-    suspend fun setFavoriteEvent(event: EventEntity, favoriteState: Boolean) {
-        event.isFavorite = favoriteState
-        eventDao.updateEvent(event)
-    }
-//    suspend fun updateEventFavorite(eventId: Int, isFavorite: Boolean) {
-//        eventDao.updateEventFavorite(eventId, isFavorite)
-//    }
 
     companion object {
         @Volatile

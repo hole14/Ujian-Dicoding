@@ -2,28 +2,23 @@ package com.example.ujiandicoding.ui.finished
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ujiandicoding.EventViewModel
 import com.example.ujiandicoding.EventViewModelFactory
-import com.example.ujiandicoding.R
 import com.example.ujiandicoding.data.Result
-import com.example.ujiandicoding.data.entity.EventEntity
-import com.example.ujiandicoding.data.respone.ListEventsItem
 import com.example.ujiandicoding.databinding.FragmentFinishedBinding
 
 class FinishedFragment : Fragment() {
     private lateinit var binding: FragmentFinishedBinding
-    private var search = listOf<ListEventsItem>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFinishedBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -36,23 +31,21 @@ class FinishedFragment : Fragment() {
             factory
         }
 
-        val adapter = FinishedAdapter { event ->
-            if (event.isFavorite) {
-                viewModel.deleteFavoriteEvent(event)
-            } else {
-                viewModel.saveFavoriteEvent(event)
-            }
-        }
+        val adapter = FinishedAdapter()
         binding.rvFinished.layoutManager = LinearLayoutManager(requireContext())
         binding.rvFinished.adapter = adapter
 
         viewModel.getFinishedEvents().observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Error -> {
+                    binding.progressBar.visibility = View.GONE
                     Log.d("FinishedFragment", "onViewCreated: ${result.error}")
                 }
-                Result.Loading -> {}
+                Result.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
                 is Result.Success -> {
+                    binding.progressBar.visibility = View.GONE
                     adapter.submitList(result.data)
                 }
             }

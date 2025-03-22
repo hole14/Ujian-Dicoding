@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.ujiandicoding.data.entity.EventEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EventDao {
@@ -18,22 +17,19 @@ interface EventDao {
     @Query("SELECT * FROM event WHERE name LIKE '%' || :query || '%'")
     suspend fun getSearchEvent(query: String): List<EventEntity>
 
-    @Query("SELECT * FROM event")
-    fun getAllEvent(): LiveData<List<EventEntity>>
+    @Query("SELECT * FROM event WHERE active = 1")
+    fun getUpcomingEvents(): LiveData<List<EventEntity>>
+
+    @Query("SELECT * FROM event WHERE active = 0")
+    fun getFinishedEvents(): LiveData<List<EventEntity>>
 
     @Update
     suspend fun updateEvent(event: EventEntity)
 
-    @Query("DELETE FROM event WHERE isFavorite = 0")
-    fun deleteAll()
+    @Query("SELECT * FROM event WHERE isFavorite = 1")
+    fun getFavoriteEvents(): LiveData<List<EventEntity>>
 
-    @Query("SELECT * FROM event where isFavorite = 1")
-    fun getEventFavorites(): LiveData<List<EventEntity>>
-
-    @Query("SELECT EXISTS(SELECT 1 FROM event WHERE id = :id AND isFavorite = 1)")
-    fun isEventFavorited(id: Int): Boolean
-
-//    @Query("UPDATE event SET isFavorite = :isFavorite WHERE id = :eventId")
-//    suspend fun updateEventFavorite(eventId: Int, isFavorite: Boolean)
+    @Query("UPDATE event SET isFavorite = :isFavorite WHERE id = :eventId")
+    suspend fun updateFavoriteStatus(eventId: Int, isFavorite: Boolean)
 
 }

@@ -54,6 +54,8 @@ data class EventEntity (
     val registrants: Int,
 
     @field:ColumnInfo(name = "isFavorite")
-    var isFavorite: Boolean
+    var isFavorite: Boolean = false,
+
+    val active: Int
 
 ): Parcelable

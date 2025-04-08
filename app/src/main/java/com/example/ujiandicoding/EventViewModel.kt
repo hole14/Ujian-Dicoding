@@ -3,13 +3,11 @@ package com.example.ujiandicoding
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.ujiandicoding.data.EventRepository
 import com.example.ujiandicoding.data.entity.EventEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class EventViewModel(private val eventRepository: EventRepository) : ViewModel() {
     fun getUpcomingEvents() = eventRepository.getUpcomingEvents()

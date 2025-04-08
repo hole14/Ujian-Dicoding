@@ -29,27 +29,22 @@ class UpcomingFragment : Fragment() {
         val factory = EventViewModelFactory.getInstance(requireActivity())
         val viewModel:EventViewModel by viewModels { factory }
 
-        val adapter = UpcomingAdapter {event ->
-            if (event.isFavorite) {
-                viewModel.deleteFavoriteEvent(event)
-            } else {
-                viewModel.saveFavoriteEvent(event)
-            }
-        }
+        val adapter = UpcomingAdapter ()
 
         binding.rvUpcoming.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUpcoming.adapter = adapter
-        adapter.submitList(emptyList())
 
         viewModel.getUpcomingEvents().observe(viewLifecycleOwner){result ->
             when (result){
                 is Result.Error -> {
+                    binding.progressBar.visibility = View.GONE
                     Log.d("UpcomingFragment", "onViewCreated: ${result.error}")
                 }
                 Result.Loading -> {
-
+                    binding.progressBar.visibility = View.VISIBLE
                 }
                 is Result.Success -> {
+                    binding.progressBar.visibility = View.GONE
                     adapter.submitList(result.data)
                 }
             }

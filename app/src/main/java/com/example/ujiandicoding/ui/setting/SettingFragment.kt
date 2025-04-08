@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
+import com.example.ujiandicoding.data.ReminderWorker
 import com.example.ujiandicoding.databinding.FragmentSettingBinding
 import java.util.concurrent.TimeUnit
 
@@ -18,6 +19,14 @@ class SettingFragment : Fragment() {
     private val viewModel: SettingViewModel by viewModels{
         ViewModelFactory(SettingPreference.getInstance(requireContext().dataStore))
     }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            Toast.makeText(requireContext(), "Izin notifikasi ditolak", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,6 +53,9 @@ class SettingFragment : Fragment() {
         binding.switchDaily.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveReminderSetting(isChecked)
             if (isChecked) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
                 dailyReminder()
             } else {
                 WorkManager.getInstance(requireContext()).cancelUniqueWork("DailyReminder")
@@ -52,12 +64,18 @@ class SettingFragment : Fragment() {
     }
 
     private fun dailyReminder(){
-        val worker = PeriodicWorkRequestBuilder<Worker>(1, TimeUnit.DAYS)
+        val worker = OneTimeWorkRequestBuilder<ReminderWorker>()
             .setInitialDelay(10, TimeUnit.MINUTES)
             .build()
 
-        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork("DailyReminder",
-            ExistingPeriodicWorkPolicy.UPDATE, worker)
+        val workManager = WorkManager.getInstance(requireContext())
+        workManager.enqueue(worker)
+
+        workManager.getWorkInfoByIdLiveData(worker.id).observe(viewLifecycleOwner){ workInfo ->
+            if (workInfo?.state?.isFinished == true){
+                dailyReminder()
+            }
+        }
     }
 
 }

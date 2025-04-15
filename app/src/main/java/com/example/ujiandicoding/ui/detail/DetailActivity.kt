@@ -38,42 +38,42 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        val event = intent.getParcelableExtra<EventEntity>(EXTRA_EVENT)
-
-        binding.tvJudul.text = event?.name
-        binding.tvKategori.text = event?.category
-        binding.tvTanggal.text = "📆 ${event?.beginTime?.let { formatDate(it) }} - ${event?.endTime?.let { formatDate(it) }}"
-        binding.tvWaktu.text = "⏰ ${event?.beginTime?.let { formatTime(it) }} - ${event?.endTime?.let { formatTime(it) }}"
-        binding.tvDeskripsi.text = HtmlCompat.fromHtml(event?.description!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        Glide.with(this)
-            .load(event.mediaCover)
-            .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))
-            .into(binding.ivFoto)
-        binding.tvKota.text = "📍 ${event.cityName}"
-        binding.tvQuota.text = "👥 ${event.registrants}/${event.quota}"
-        binding.tvSummary.text = event.summary
-        binding.tvOwner.text = "By: ${event.ownerName}"
-        binding.btnRegister.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.link))
-            startActivity(intent)
-        }
-
         val database = EventDatabase.getInstance(this)
         val eventDao = database.eventDao()
         eventRepository = EventRepository.getInstance(eventDao, ApiConfig.getApiService())
 
-        binding.like.setOnClickListener {
-           lifecycleScope.launch(Dispatchers.IO) {
-               event.let {
-                   eventRepository.toggleFavorite(it)
-                   val favorite = !it.isFavorite
-                   it.isFavorite = favorite
-                   withContext(Dispatchers.Main){
-                       val icon = if (favorite) R.drawable.ic_love else R.drawable.ic_love_change
-                       binding.like.setImageResource(icon)
-                   }
-               }
-           }
+        val event = intent.getParcelableExtra<EventEntity>(EXTRA_EVENT)?.id ?: return
+
+        eventRepository.getEventById(event).observe(this){ event ->
+            if (event != null){
+                binding.tvJudul.text = event.name
+                binding.tvKategori.text = event.category
+                binding.tvTanggal.text = "📆 ${formatDate(event.beginTime)} - ${formatDate(event.endTime)}"
+                binding.tvWaktu.text = "⏰ ${formatTime(event.beginTime)} - ${formatTime(event.endTime)}"
+                binding.tvDeskripsi.text = HtmlCompat.fromHtml(event.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                Glide.with(this)
+                    .load(event.mediaCover)
+                    .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))
+                    .into(binding.ivFoto)
+                binding.tvKota.text = "📍 ${event.cityName}"
+                binding.tvQuota.text = "👥 ${event.registrants}/${event.quota}"
+                binding.tvSummary.text = event.summary
+                binding.tvOwner.text = "By: ${event.ownerName}"
+                binding.btnRegister.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.link))
+                    startActivity(intent)
+                }
+                val icon = if (event.isFavorite) R.drawable.ic_love_change else R.drawable.ic_love
+                binding.like.setImageResource(icon)
+
+                binding.like.setOnClickListener{
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO){
+                            eventRepository.toggleFavorite(event)
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.ujiandicoding.data.ReminderWorker
 import com.example.ujiandicoding.databinding.FragmentSettingBinding
@@ -56,26 +58,23 @@ class SettingFragment : Fragment() {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                     requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
-                dailyReminder()
+                periodicReminder()
             } else {
-                WorkManager.getInstance(requireContext()).cancelUniqueWork("DailyReminder")
+                WorkManager.getInstance(requireContext()).cancelUniqueWork("PeriodicReminder")
             }
         }
     }
 
-    private fun dailyReminder(){
-        val worker = OneTimeWorkRequestBuilder<ReminderWorker>()
-            .setInitialDelay(10, TimeUnit.MINUTES)
+    private fun periodicReminder() {
+        val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(5, TimeUnit.MINUTES)
             .build()
 
-        val workManager = WorkManager.getInstance(requireContext())
-        workManager.enqueue(worker)
-
-        workManager.getWorkInfoByIdLiveData(worker.id).observe(viewLifecycleOwner){ workInfo ->
-            if (workInfo?.state?.isFinished == true){
-                dailyReminder()
-            }
-        }
+        WorkManager.getInstance(requireContext())
+            .enqueueUniquePeriodicWork(
+                "PeriodicReminder",
+                ExistingPeriodicWorkPolicy.UPDATE,
+                workRequest
+            )
     }
 
 }

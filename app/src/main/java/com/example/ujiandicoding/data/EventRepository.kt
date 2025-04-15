@@ -84,15 +84,21 @@ class EventRepository private constructor(
         return eventDao.getSearchEvent(query)
     }
 
-    fun getFavoriteEvents(): LiveData<List<EventEntity>> = eventDao.getFavoriteEvents()
+    fun getFavoriteEvents() = eventDao.getFavoriteEvents()
 
     suspend fun toggleFavorite(event: EventEntity) {
-        eventDao.updateFavoriteStatus(event.id, !event.isFavorite)
+        event.isFavorite = !event.isFavorite
+        eventDao.updateFavoriteStatus(event.id, event.isFavorite)
+    }
+
+    fun getEventById(eventId: Int): LiveData<EventEntity> {
+        return eventDao.getEventById(eventId)
     }
 
     companion object {
         @Volatile
         private var instance: EventRepository? = null
+
         fun getInstance(eventDao: EventDao, apiService: ApiService): EventRepository =
             instance ?: synchronized(this) {
                 instance ?: EventRepository(eventDao, apiService).also { instance = it }

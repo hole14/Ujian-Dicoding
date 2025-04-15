@@ -22,7 +22,7 @@ class FinishedAdapter: ListAdapter<EventEntity, FinishedAdapter.ViewHolder>(DIFF
         fun bind(event: EventEntity) {
             binding.tvJudul.text = event.name
             binding.tvKategori.text = event.category
-            binding.tvTanggal.text = "${formatDate(event.beginTime)} - ${formatDate(event.endTime)}"
+            binding.tvTanggal.text = formatDate(event.beginTime)
             Glide.with(itemView.context)
                 .load(event.imageLogo)
                 .apply(RequestOptions.placeholderOf(R.drawable.ic_loading).error(R.drawable.ic_error))

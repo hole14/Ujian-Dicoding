@@ -37,8 +37,13 @@ class FavoriteFragment : Fragment() {
         binding.rvFavorite.layoutManager = LinearLayoutManager(requireContext())
 
         eventRepository.getFavoriteEvents().observe(viewLifecycleOwner) { favoriteEvents ->
-            binding.progressBar.visibility = if (favoriteEvents == null) View.VISIBLE else View.GONE
-            adapter.submitList(favoriteEvents)
+            binding.progressBar.visibility = View.GONE
+            if (favoriteEvents.isNullOrEmpty()) {
+                binding.rvFavorite.visibility = View.GONE
+            } else {
+                binding.rvFavorite.visibility = View.VISIBLE
+                adapter.submitList(favoriteEvents)
+            }
         }
     }
 }

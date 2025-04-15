@@ -62,18 +62,18 @@ class DetailActivity : AppCompatActivity() {
         val eventDao = database.eventDao()
         eventRepository = EventRepository.getInstance(eventDao, ApiConfig.getApiService())
 
-        binding.fabAdd.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                eventRepository.toggleFavorite(event)
-                val favorite = !event.isFavorite
-                event.isFavorite = favorite
-                withContext(Dispatchers.Main) {
-                    binding.fabAdd.setImageResource(
-                        if (favorite) R.drawable.ic_love_change else R.drawable.ic_love
-                    )
-                    binding.fabAdd.setColorFilter(binding.root.context.getColor(if (favorite) R.color.red else R.color.placeholder))
-                }
-            }
+        binding.like.setOnClickListener {
+           lifecycleScope.launch(Dispatchers.IO) {
+               event.let {
+                   eventRepository.toggleFavorite(it)
+                   val favorite = !it.isFavorite
+                   it.isFavorite = favorite
+                   withContext(Dispatchers.Main){
+                       val icon = if (favorite) R.drawable.ic_love else R.drawable.ic_love_change
+                       binding.like.setImageResource(icon)
+                   }
+               }
+           }
         }
     }
 

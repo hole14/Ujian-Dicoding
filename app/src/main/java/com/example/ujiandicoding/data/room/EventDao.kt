@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.example.ujiandicoding.data.entity.EventEntity
 
 @Dao
@@ -23,13 +22,13 @@ interface EventDao {
     @Query("SELECT * FROM event WHERE active = 0")
     fun getFinishedEvents(): LiveData<List<EventEntity>>
 
-    @Update
-    suspend fun updateEvent(event: EventEntity)
-
     @Query("SELECT * FROM event WHERE isFavorite = 1")
     fun getFavoriteEvents(): LiveData<List<EventEntity>>
 
     @Query("UPDATE event SET isFavorite = :isFavorite WHERE id = :eventId")
     suspend fun updateFavoriteStatus(eventId: Int, isFavorite: Boolean)
+
+    @Query("SELECT * FROM event WHERE id = :eventId LIMIT 1")
+    fun getEventById(eventId: Int): LiveData<EventEntity>
 
 }

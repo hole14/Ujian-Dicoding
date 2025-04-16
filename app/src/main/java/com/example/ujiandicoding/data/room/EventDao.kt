@@ -13,7 +13,7 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: List<EventEntity>)
 
-    @Query("SELECT * FROM event WHERE name LIKE '%' || :query || '%'")
+    @Query("SELECT * FROM event WHERE name LIKE '%' || :query || '%' order by name asc")
     suspend fun getSearchEvent(query: String): List<EventEntity>
 
     @Query("SELECT * FROM event WHERE active = 1")

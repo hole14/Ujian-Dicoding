@@ -54,14 +54,12 @@ class FinishedFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.searchEvents(newText)
                 }
                 return true
             }
-
         })
         viewModel.query.observe(viewLifecycleOwner) {
             adapter.submitList(it)

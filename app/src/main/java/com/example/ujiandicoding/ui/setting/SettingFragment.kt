@@ -1,5 +1,6 @@
 package com.example.ujiandicoding.ui.setting
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.ujiandicoding.data.ReminderWorker
@@ -55,7 +55,7 @@ class SettingFragment : Fragment() {
         binding.switchDaily.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveReminderSetting(isChecked)
             if (isChecked) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
                 periodicReminder()
@@ -66,7 +66,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun periodicReminder() {
-        val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(5, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(15, TimeUnit.MINUTES)
             .build()
 
         WorkManager.getInstance(requireContext())

@@ -59,7 +59,7 @@ class FinishedFragment : Fragment() {
 
         val searchText = binding.searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
         searchText.setHintTextColor(resources.getColor(android.R.color.darker_gray))
-        searchText.setTextColor(resources.getColor(android.R.color.black))
+        searchText.setTextColor(resources.getColor(R.color.search_icon_color))
 
         val searchIcon = binding.searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
         searchIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.search_icon_color), PorterDuff.Mode.SRC_IN)
